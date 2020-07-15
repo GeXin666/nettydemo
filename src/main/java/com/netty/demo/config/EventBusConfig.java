@@ -13,7 +13,7 @@ public class EventBusConfig {
 
     @Bean
     public EventBus registerEventBus() {
-        AsyncEventBus eventBus = new AsyncEventBus("eventBusName",Executors.newFixedThreadPool(50));
+        AsyncEventBus eventBus = new AsyncEventBus("eventBusName", Executors.newFixedThreadPool(50));
         eventBus.register(eventSubscribe());
         return eventBus;
     }
