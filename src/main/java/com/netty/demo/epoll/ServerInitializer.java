@@ -20,6 +20,7 @@ public class ServerInitializer extends ChannelInitializer {
                 .maxFramePayloadLength(Integer.MAX_VALUE)
                 .checkStartsWith(false).build();
         ch.pipeline().addLast("webSocketHandler", new WebSocketServerProtocolHandler(wsConfig));
+        ch.pipeline().addLast("wsEvent", WebSocketEvent.INSTANCE);
         ch.pipeline().addLast("WsTextHandler", new TextFrameHandler());
     }
 }

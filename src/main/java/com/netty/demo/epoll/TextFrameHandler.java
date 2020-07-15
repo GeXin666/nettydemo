@@ -13,7 +13,6 @@ public class TextFrameHandler extends SimpleChannelInboundHandler<TextWebSocketF
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, TextWebSocketFrame msg) {
         log.info(msg.text());
-        SpringUtils.getBean(EventBus.class).post(msg.text());
     }
 
 }
