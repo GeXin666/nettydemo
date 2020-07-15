@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 public class WebApiController {
 
     @ResponseBody
-    @GetMapping("/test")
+    @RequestMapping("/test")
     public Object test() {
         log.info("WebApi test");
         return "success";
