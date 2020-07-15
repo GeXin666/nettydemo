@@ -13,18 +13,19 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupp
  * SpringBoot与Netty集成
  */
 @SpringBootApplication
-public class App /*extends WebMvcConfigurationSupport*/ {
+@ServletComponentScan
+public class App extends WebMvcConfigurationSupport {
 
     public static void main(String[] args) throws Exception {
         ApplicationContext context = new SpringApplicationBuilder(App.class).
-                web(WebApplicationType.NONE).run(args);
+               /* web(WebApplicationType.NONE).*/run(args);
         NettyServer nettyServer = context.getBean(NettyServer.class);
         nettyServer.start();
     }
 
-//    @Override
-//    public void addResourceHandlers(ResourceHandlerRegistry registry) {
-//        registry.addResourceHandler("/static/**").addResourceLocations("classpath:/static/");
-//    }
+    @Override
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        registry.addResourceHandler("/static/**").addResourceLocations("classpath:/static/");
+    }
 
 }

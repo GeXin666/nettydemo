@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <title>Title</title>
     <script type="text/javascript">
-        var websocket = new WebSocket("ws:129.204.100.181:8080/websocket");
+        var websocket = new WebSocket("ws:127.0.0.1:8080/websocket");
         websocket.onopen = function() {
             console.log("websocket connected.")
         }
@@ -18,8 +18,13 @@
         websocket.onclose = function() {
             console.log("websocket closed.")
         };
+
+        function send() {
+            websocket.send("hello");
+        }
     </script>
 </head>
 <body>
+    <button value="发送数据" onclick="send()">发送数据</button>
 </body>
 </html>
