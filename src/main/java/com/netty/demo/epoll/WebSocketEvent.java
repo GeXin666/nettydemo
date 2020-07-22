@@ -4,6 +4,7 @@ import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.handler.codec.http.websocketx.WebSocketServerProtocolHandler.HandshakeComplete;
+import io.netty.util.AttributeKey;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -20,6 +21,7 @@ public class WebSocketEvent extends ChannelInboundHandlerAdapter {
             log.debug(handshakeEvent.requestHeaders().toString());
             //add to group
             ServerUtils.addChannel(ctx.channel());
+            ctx.channel().attr(AttributeKey.valueOf("USERID")).set("xxxxxxxxx");
         }
         super.userEventTriggered(ctx, evt);
     }
