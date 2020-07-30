@@ -20,15 +20,15 @@ import org.springframework.stereotype.Component;
 public class NettyServer {
 
     public void start() throws InterruptedException {
-        EventLoopGroup bossGroup = new EpollEventLoopGroup(1);
-        EventLoopGroup workerGroup = new EpollEventLoopGroup(128);
+        EventLoopGroup bossGroup = new NioEventLoopGroup(1);
+        EventLoopGroup workerGroup = new NioEventLoopGroup(128);
         try {
             ServerBootstrap b = new ServerBootstrap();
             b.group(bossGroup, workerGroup)
-            .channel(EpollServerSocketChannel.class)
+            .channel(NioServerSocketChannel.class)
             .handler(new LoggingHandler(LogLevel.DEBUG))
             .option(ChannelOption.ALLOCATOR, ByteBufAllocator.DEFAULT)
-            .childHandler(new ServerInitializer());
+            .childHandler(new SSLServerInitializer());
             Channel ch = b.bind("0.0.0.0", Config.serverPort).sync().channel();
             log.info("Netty Server started on port: {}", Config.serverPort);
             ch.closeFuture().sync();
