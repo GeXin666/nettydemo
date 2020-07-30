@@ -6,6 +6,8 @@ import io.netty.buffer.ByteBufAllocator;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
+import io.netty.channel.epoll.EpollEventLoopGroup;
+import io.netty.channel.epoll.EpollServerSocketChannel;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.logging.LogLevel;
@@ -18,12 +20,12 @@ import org.springframework.stereotype.Component;
 public class NettyServer {
 
     public void start() throws InterruptedException {
-        EventLoopGroup bossGroup = new NioEventLoopGroup(1);
-        EventLoopGroup workerGroup = new NioEventLoopGroup(128);
+        EventLoopGroup bossGroup = new EpollEventLoopGroup(1);
+        EventLoopGroup workerGroup = new EpollEventLoopGroup(128);
         try {
             ServerBootstrap b = new ServerBootstrap();
             b.group(bossGroup, workerGroup)
-            .channel(NioServerSocketChannel.class)
+            .channel(EpollServerSocketChannel.class)
             .handler(new LoggingHandler(LogLevel.DEBUG))
             .option(ChannelOption.ALLOCATOR, ByteBufAllocator.DEFAULT)
             .childHandler(new ServerInitializer());
