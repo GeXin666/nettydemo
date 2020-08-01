@@ -27,10 +27,10 @@ public class NettyServer {
     public void start() throws Exception {
         ServerBootstrap b = new ServerBootstrap();
         b.group(bossGroup, workerGroup)
-                .channel(NioServerSocketChannel.class)
-                .handler(new LoggingHandler(LogLevel.DEBUG))
-                .option(ChannelOption.ALLOCATOR, ByteBufAllocator.DEFAULT)
-                .childHandler(new SSLServerInitializer());
+            .channel(NioServerSocketChannel.class)
+            .handler(new LoggingHandler(LogLevel.DEBUG))
+            .option(ChannelOption.ALLOCATOR, ByteBufAllocator.DEFAULT)
+            .childHandler(new SSLServerInitializer());
         Channel channel = b.bind("0.0.0.0", Config.serverPort).sync().channel();
         log.info("Netty Server started on port: {}", Config.serverPort);
         channel.closeFuture().sync();
