@@ -21,7 +21,7 @@ import javax.annotation.PreDestroy;
 public class NettyServer {
 
     private EventLoopGroup bossGroup = new NioEventLoopGroup(1);
-    private EventLoopGroup workerGroup = new NioEventLoopGroup(128);
+    private EventLoopGroup workerGroup = new NioEventLoopGroup(32);
 
     @PostConstruct
     public void start() throws Exception {
