@@ -30,7 +30,7 @@ public class NettyServer {
             .channel(NioServerSocketChannel.class)
             .handler(new LoggingHandler(LogLevel.DEBUG))
             .option(ChannelOption.ALLOCATOR, ByteBufAllocator.DEFAULT)
-            .childHandler(new SSLServerInitializer());
+            .childHandler(new ServerInitializer());
         Channel channel = b.bind("0.0.0.0", Config.serverPort).sync().channel();
         log.info("Netty Server started on port: {}", Config.serverPort);
         channel.closeFuture().sync();
