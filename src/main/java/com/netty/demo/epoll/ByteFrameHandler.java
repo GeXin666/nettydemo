@@ -12,8 +12,5 @@ public class ByteFrameHandler extends SimpleChannelInboundHandler<BinaryWebSocke
     protected void channelRead0(ChannelHandlerContext ctx, BinaryWebSocketFrame msg) throws Exception {
         byte[] content = new byte[msg.content().readableBytes()];
         msg.content().readBytes(content);
-
-        ImServerProto.ImLogin login = ImServerProto.ImLogin.parseFrom(content);
-        log.debug(login.toString());
     }
 }
