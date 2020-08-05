@@ -25,8 +25,9 @@ public class SSLServerInitializer extends ChannelInitializer {
         try {
             sslCtx = SslContextBuilder
                 .forServer(certChainFile, keyFile)
+                //.protocols("TLSv1.3","TLSv.1.2")
                 .clientAuth(ClientAuth.NONE)
-                .sslProvider(SslProvider.JDK).build();
+                .sslProvider(SslProvider.OPENSSL).build();
         } catch (SSLException e) {
             log.error(e.getMessage());
         }
