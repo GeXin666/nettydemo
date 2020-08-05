@@ -7,8 +7,6 @@ import io.netty.handler.codec.http.HttpRequestDecoder;
 import io.netty.handler.codec.http.HttpResponseEncoder;
 import io.netty.handler.codec.http.websocketx.WebSocketServerProtocolConfig;
 import io.netty.handler.codec.http.websocketx.WebSocketServerProtocolHandler;
-import io.netty.handler.logging.LogLevel;
-import io.netty.handler.logging.LoggingHandler;
 
 public class ServerInitializer extends ChannelInitializer {
     @Override
@@ -22,7 +20,7 @@ public class ServerInitializer extends ChannelInitializer {
                 .maxFramePayloadLength(Integer.MAX_VALUE)
                 .checkStartsWith(true).build();
         ch.pipeline().addLast("webSocketHandler", new WebSocketServerProtocolHandler(wsConfig));
-        ch.pipeline().addLast("wsEvent", WebSocketEvent.INSTANCE);
         ch.pipeline().addLast("WsTextHandler", new TextFrameHandler());
+        ch.pipeline().addLast("WsByteHandler", new ByteFrameHandler());
     }
 }

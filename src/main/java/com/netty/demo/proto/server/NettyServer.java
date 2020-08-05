@@ -1,4 +1,4 @@
-package com.netty.demo.epoll;
+package com.netty.demo.proto.server;
 
 import com.netty.demo.config.Config;
 import io.netty.bootstrap.ServerBootstrap;
@@ -17,7 +17,7 @@ import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 
 @Slf4j
-//@Component
+@Component
 public class NettyServer {
 
     private EventLoopGroup bossGroup = new NioEventLoopGroup(1);
