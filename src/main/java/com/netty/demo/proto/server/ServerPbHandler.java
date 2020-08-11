@@ -11,10 +11,14 @@ public class ServerPbHandler extends SimpleChannelInboundHandler<MessageLite> {
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, MessageLite msg) throws Exception {
-        if(msg instanceof ImServerProto.ImLogin) {
-            ImServerProto.ImLogin login = (ImServerProto.ImLogin) msg;
-            log.debug(login.toString());
-            ctx.channel().writeAndFlush(login);
+        ImServerProto.ImServerMessage imServerMessage = (ImServerProto.ImServerMessage) msg;
+
+        if(imServerMessage.getMsgType() == ImServerProto.ImServerMessage.MsgType.ImLogin) {
+            ctx.fireChannelRead(imServerMessage.getImLogin());
+        }
+
+        if(imServerMessage.getMsgType() == ImServerProto.ImServerMessage.MsgType.ImServerResponse) {
+            ctx.fireChannelRead(imServerMessage.getImServerResponse());
         }
     }
 }

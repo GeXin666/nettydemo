@@ -15,11 +15,13 @@ public class ServerInitializer extends ChannelInitializer {
         ChannelPipeline pipeline = ch.pipeline();
         // 解码器
         pipeline.addLast("frameDecoder",new LengthFieldBasedFrameDecoder(1048576, 0, 4, 0, 4));
-        pipeline.addLast("protobufDecoder",new ProtobufDecoder(ImServerProto.ImLogin.getDefaultInstance()));
+        pipeline.addLast("protobufDecoder",new ProtobufDecoder(ImServerProto.ImServerMessage.getDefaultInstance()));
         // 编码器
         pipeline.addLast("frameEncoder", new LengthFieldPrepender(4));
         pipeline.addLast("protobufEncoder", new ProtobufEncoder());
         // 业务处理
         pipeline.addLast("ServerPbHandler", new ServerPbHandler());
+        pipeline.addLast("ImLoginHandler", new ImLoginHandler());
+        pipeline.addLast("ImServerResponseHandler", new ImServerResponseHandler());
     }
 }
