@@ -10,11 +10,12 @@ public class ClientPbHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
-        ImServerProto.ImLogin imLogin = ImServerProto.ImLogin.newBuilder().setJwtToken("TOKEN123").build();
+       // ImServerProto.ImLogin imLogin = ImServerProto.ImLogin.newBuilder().setJwtToken("TOKEN123").build();
+        ImServerProto.ImServerResponse response = ImServerProto.ImServerResponse.newBuilder().setMessage("aaaa").build();
 
         ImServerProto.ImServerMessage message = ImServerProto.ImServerMessage.newBuilder()
-                .setMsgType(ImServerProto.ImServerMessage.MsgType.ImLogin)
-                .setImLogin(imLogin).build();
+                .setMsgType(ImServerProto.ImServerMessage.MsgType.ImServerResponse)
+                .setImServerResponse(response).build();
 
         ctx.channel().writeAndFlush(message);
         super.channelActive(ctx);
