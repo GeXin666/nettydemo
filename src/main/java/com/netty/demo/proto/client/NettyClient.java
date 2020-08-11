@@ -16,7 +16,7 @@ public class NettyClient {
             Bootstrap clientBootstrap = new Bootstrap();
             clientBootstrap.group(group);
             clientBootstrap.channel(NioSocketChannel.class);
-            clientBootstrap.remoteAddress(new InetSocketAddress("localhost", 8080));
+            clientBootstrap.remoteAddress(new InetSocketAddress("192.168.80.110", 8080));
             clientBootstrap.handler(new ClientInitializer());
             ChannelFuture channelFuture = clientBootstrap.connect().sync();
             channelFuture.channel().closeFuture().sync();
