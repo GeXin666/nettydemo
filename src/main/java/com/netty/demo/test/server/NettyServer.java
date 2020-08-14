@@ -1,4 +1,4 @@
-package com.netty.demo.proto.server;
+package com.netty.demo.test.server;
 
 import com.netty.demo.config.Config;
 import io.netty.bootstrap.ServerBootstrap;

@@ -1,10 +1,12 @@
 package com.netty.demo.fx;
 
 import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.Group;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.chart.PieChart;
 import javafx.scene.control.*;
@@ -21,8 +23,10 @@ import javafx.stage.DirectoryChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import org.springframework.core.io.ClassPathResource;
 
 import java.io.File;
+import java.net.URL;
 
 public class FirstFxApp extends Application {
 
@@ -35,14 +39,10 @@ public class FirstFxApp extends Application {
 
         primaryStage.setTitle("JavaFX App");
 
-        Pagination pagination = new Pagination();
-        pagination.setPageCount(150);
-        pagination.setCurrentPageIndex(3);
-        pagination.setMaxPageIndicatorCount(10);
-
-        VBox vBox = new VBox(pagination);
-        Scene scene = new Scene(vBox, 960, 600);
-
+        URL url = getClass().getClassLoader().getResource("Login.fxml");
+        FXMLLoader loader = new FXMLLoader(url);
+        AnchorPane rootLayout = loader.load();
+        Scene scene = new Scene(rootLayout);
         primaryStage.setScene(scene);
         primaryStage.show();
     }
