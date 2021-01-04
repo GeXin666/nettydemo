@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 public class Config {
 
     public static int serverPort;
+
     @Value("${netty.server.port}")
     public void setStationPort(int stationPort) {
         Config.serverPort = stationPort;
