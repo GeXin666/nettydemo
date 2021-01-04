@@ -6,15 +6,18 @@
     <conversionRule conversionWord="wEx" converterClass="org.springframework.boot.logging.logback.ExtendedWhitespaceThrowableProxyConverter" />
 
     <property name="CONSOLE_LOG_PATTERN"
-              value="${CONSOLE_LOG_PATTERN:-%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %clr(${LOG_LEVEL_PATTERN:-%5p}) %clr(${PID:- }){magenta} %clr(---){faint} %clr([%15.15t]){faint} %clr(%-40.40logger{39}){cyan} %clr(:){faint} %m%n${LOG_EXCEPTION_CONVERSION_WORD:-%wEx}}" />
+              value="%red(%d{yyyy-MM-dd HH:mm:ss}) %green([%thread]) %highlight(%-5level) %boldMagenta(%logger{10}):%boldMagenta(%method) - %cyan(%msg%n)" />
 
     <property name="log.directory" value="./"/>
-    <property name="logName" value="nettydemo"/>
-    <property name="logNode" value="nettydemo" />
+    <property name="logName" value="netty-demo"/>
+    <property name="logNode" value="netty-demo" />
 
     <appender name="stdout" class="ch.qos.logback.core.ConsoleAppender">
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>DEBUG</level>
+        </filter>
         <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
-            <pattern>%date{yyyy-MM-dd HH:mm:ss.SSS} | ${logNode} | %highlight(%-5level) | %boldYellow(%thread) | %boldGreen(%logger) | %boldGreen(%method) | %msg%n</pattern>
+            <pattern>${CONSOLE_LOG_PATTERN}</pattern>
         </encoder>
     </appender>
 
@@ -49,6 +52,22 @@
         </encoder>
     </appender>
 
+    <appender name="warn" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <File>${log.directory}/logs/${logName}.warn.log</File>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>WARN</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${log.directory}/logs/${logName}.warn.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} ${logNode} [%thread] %-5level %logger{40} %method - %msg%n</pattern>
+        </encoder>
+    </appender>
+
     <appender name="error" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <File>${log.directory}/logs/${logName}.error.log</File>
         <filter class="ch.qos.logback.classic.filter.LevelFilter">
@@ -66,14 +85,17 @@
     </appender>
 
     <logger name="org.springframework" level="INFO" />
-    <logger name="com.netty.demo" level="DEBUG" />
-	<logger name="io.netty" level="INFO" />
+    <logger name="com.netty" level="DEBUG" />
+    <logger name="io.netty" level="INFO" />
     <logger name="org.hibernate.validator" level="INFO" />
+    <logger name="io.grpc.netty.shaded.io.grpc.netty.NettyClientHandler" level="INFO" />
+    <logger name="io.grpc.netty.shaded.io.netty" level="INFO" />
 
-    <root level="DEBUG">
+    <root level="debug">
         <appender-ref ref="stdout"/>
         <appender-ref ref="debug"/>
         <appender-ref ref="info"/>
+        <appender-ref ref="warn"/>
         <appender-ref ref="error"/>
     </root>
 </configuration>
