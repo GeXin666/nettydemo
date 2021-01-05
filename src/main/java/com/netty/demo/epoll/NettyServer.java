@@ -5,10 +5,13 @@ import io.netty.bootstrap.ServerBootstrap;
 import io.netty.buffer.ByteBufAllocator;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
+import io.netty.channel.PreferHeapByteBufAllocator;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
+import io.netty.channel.unix.PreferredDirectByteBufAllocator;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
+import io.netty.util.ResourceLeakDetector;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
@@ -28,11 +31,13 @@ public class NettyServer {
 
     @PostConstruct
     public void start() throws Exception {
+        ResourceLeakDetector.setLevel(ResourceLeakDetector.Level.PARANOID);
+        PreferHeapByteBufAllocator allocator = new PreferHeapByteBufAllocator(ByteBufAllocator.DEFAULT);
         ServerBootstrap b = new ServerBootstrap();
         b.group(bossGroup, workerGroup)
             .channel(NioServerSocketChannel.class)
             .handler(new LoggingHandler(LogLevel.DEBUG))
-            .option(ChannelOption.ALLOCATOR, ByteBufAllocator.DEFAULT)
+            .option(ChannelOption.ALLOCATOR, allocator)
             .childHandler(new ServerInitializer());
         b.bind("0.0.0.0", Config.serverPort).sync().channel();
         log.info("Netty Server started on port: {}", Config.serverPort);
