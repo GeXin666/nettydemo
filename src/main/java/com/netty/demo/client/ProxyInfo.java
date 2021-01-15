@@ -13,4 +13,6 @@ public class ProxyInfo {
     private int port;
     private String username;
     private String password;
+    private String targetIp;
+    private int targetPort;
 }

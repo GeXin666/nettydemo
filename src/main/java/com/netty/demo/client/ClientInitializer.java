@@ -5,22 +5,20 @@ import io.netty.channel.ChannelInitializer;
 import io.netty.handler.proxy.Socks5ProxyHandler;
 
 import java.net.InetSocketAddress;
-import java.util.Queue;
 
 public class ClientInitializer extends ChannelInitializer<Channel> {
 
-    public Queue<ProxyInfo> proxyQueue;
+    public ProxyInfo proxyInfo;
 
-    public ClientInitializer(Queue<ProxyInfo> proxyQueue) {
-        this.proxyQueue = proxyQueue;
+    public ClientInitializer(ProxyInfo proxyInfo) {
+        this.proxyInfo = proxyInfo;
     }
 
     @Override
     protected void initChannel(Channel ch) {
-        ProxyInfo proxy = proxyQueue.poll();
-        InetSocketAddress proxyAddress = new InetSocketAddress(proxy.getIp(), proxy.getPort());
+        InetSocketAddress proxyAddress = new InetSocketAddress(proxyInfo.getIp(), proxyInfo.getPort());
         ch.pipeline().addLast("sock5", new Socks5ProxyHandler(
-                proxyAddress, proxy.getUsername(), proxy.getPassword()));
+                proxyAddress, proxyInfo.getUsername(), proxyInfo.getPassword()));
         ch.pipeline().addLast("clientHandler", new ClientHandler());
     }
 }
