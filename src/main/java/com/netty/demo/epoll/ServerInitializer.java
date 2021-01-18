@@ -13,9 +13,9 @@ public class ServerInitializer extends ChannelInitializer {
     @Override
     protected void initChannel(Channel ch) {
         //ch.pipeline().addLast("log", new LoggingHandler(LogLevel.INFO));
-        ch.pipeline().addLast("http-codec", new HttpServerCodec());
-        ch.pipeline().addLast("aggregator", new HttpObjectAggregator(Integer.MAX_VALUE));
-        ch.pipeline().addLast("http-chunked", new ChunkedWriteHandler());
+//        ch.pipeline().addLast("http-codec", new HttpServerCodec());
+//        ch.pipeline().addLast("aggregator", new HttpObjectAggregator(Integer.MAX_VALUE));
+//        ch.pipeline().addLast("http-chunked", new ChunkedWriteHandler());
         ch.pipeline().addLast("handler", new MyHandler());
     }
 }
