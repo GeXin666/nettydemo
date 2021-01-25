@@ -15,8 +15,6 @@ public class ClientHandler extends ChannelInboundHandlerAdapter {
 
     private ScheduledFuture heartbeatFuture;
 
-    private ScheduledFuture closeFuture;
-
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         ByteBuf buf = (ByteBuf) msg;
@@ -28,33 +26,19 @@ public class ClientHandler extends ChannelInboundHandlerAdapter {
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
         log.info("New Client Active: {}", ctx.channel().toString());
 
-        ByteBuf helloBuf = ctx.alloc().ioBuffer();
-        //helloBuf.writeBytes(byte[]);
-        ctx.channel().writeAndFlush(helloBuf);
-
-        ByteBuf connectBuf = ctx.alloc().ioBuffer();
-        //connectBuf.writeBytes(byte[]);
-        ctx.channel().writeAndFlush(connectBuf);
-
-        //定时心跳
+        //定时发送数据
         heartbeatFuture = ctx.channel().eventLoop().scheduleWithFixedDelay(()-> {
-            log.info("这里发送心跳->>>");
-            //ByteBuf buf = ctx.alloc().ioBuffer();
-            //buf.writeBytes(byte[]);
-            //ctx.channel().writeAndFlush(buf);
+            log.info("这里定时发送数据->>>");
+            ByteBuf buf = ctx.alloc().ioBuffer();
+            buf.writeBytes("hello".getBytes());
+            ctx.channel().writeAndFlush(buf);
         }, 20, 20, TimeUnit.SECONDS);
-
-        //定时关闭
-        closeFuture = ctx.channel().eventLoop().schedule(() ->{
-            ctx.channel().close();
-        }, 2, TimeUnit.HOURS);
     }
 
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
         log.warn("Client Inactive: {}", ctx.channel().toString());
         heartbeatFuture.cancel(true);
-        closeFuture.cancel(true);
         super.channelInactive(ctx);
     }
 

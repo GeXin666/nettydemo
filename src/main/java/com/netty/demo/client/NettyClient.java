@@ -16,11 +16,9 @@ public class NettyClient {
 
         NettyClient nettyClient = new NettyClient();
 
-        for (int i = 0; i < 1; i++) {
-            //创建代理信息
-            ProxyInfo proxyInfo = new ProxyInfo("117.43.75.33", 65001, "1d977", "1d977", "39.106.204.3", 8080);
+        for (int i = 0; i < 2; i++) {
             //创建一个客户端连接
-            Channel channel = nettyClient.createClient(proxyInfo);
+            Channel channel = nettyClient.createClient();
             //把连接加入组(连接关闭自动从组内移除)
             channels.add(channel);
         }
@@ -37,12 +35,12 @@ public class NettyClient {
      */
     private EventLoopGroup works = new NioEventLoopGroup(32);
 
-    public Channel createClient(ProxyInfo proxyInfo) throws InterruptedException {
+    public Channel createClient() throws InterruptedException {
         Bootstrap b = new Bootstrap();
         b.group(works)
         .channel(NioSocketChannel.class)
-        .handler(new ClientInitializer(proxyInfo));
-        Channel channel = b.connect(proxyInfo.getTargetIp(), proxyInfo.getTargetPort()).sync().channel();
+        .handler(new ClientInitializer());
+        Channel channel = b.connect("192.168.80.110", 8080).sync().channel();
         return channel;
     }
 
