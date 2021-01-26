@@ -4,6 +4,7 @@ import com.netty.demo.epoll.handler.InboundHandlerA;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
+import io.netty.channel.DefaultChannelId;
 import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.HttpServerCodec;
 import io.netty.handler.codec.http.websocketx.WebSocketServerProtocolConfig;
@@ -18,7 +19,7 @@ public class ServerInitializer extends ChannelInitializer {
         pipeline.addLast("aggregator", new HttpObjectAggregator(Integer.MAX_VALUE));
         pipeline.addLast("http-chunked", new ChunkedWriteHandler());
         WebSocketServerProtocolConfig wsConfig = WebSocketServerProtocolConfig.newBuilder()
-                .websocketPath("mypath")
+                .websocketPath("/mypath")
                 .maxFramePayloadLength(Integer.MAX_VALUE)
                 .checkStartsWith(true).build();
         pipeline.addLast("webSocketHandshake", new WebSocketServerProtocolHandler(wsConfig));

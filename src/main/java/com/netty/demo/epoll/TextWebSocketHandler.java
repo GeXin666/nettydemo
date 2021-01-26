@@ -8,5 +8,6 @@ public class TextWebSocketHandler extends SimpleChannelInboundHandler<TextWebSoc
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, TextWebSocketFrame msg) throws Exception {
         System.out.println(msg.text());
+        ctx.channel().writeAndFlush(new TextWebSocketFrame("adsadsadsadsa"));
     }
 }
