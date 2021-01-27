@@ -38,13 +38,19 @@ public class ClientHandler extends ChannelInboundHandlerAdapter {
                 if(ctx.channel().isWritable()) {
                     ctx.channel().write(buf);
                 } else {
-                    log.warn("channel is not writeable :" + ctx.channel().unsafe().outboundBuffer().nioBufferSize());
+                    //log.warn("channel is not writeable :" + ctx.channel().unsafe().outboundBuffer().nioBufferSize());
                 }
                 ctx.flush();
-                int counter = SEQ.getAndSet(0);
-                log.info("the client is send rate is " + counter + "bytes/s");
             }
+            int counter = SEQ.getAndSet(0);
+            log.info("the client is send rate is " + counter + "bytes/s");
         }, 0, 1000, TimeUnit.MILLISECONDS);
+    }
+
+    @Override
+    public void channelWritabilityChanged(ChannelHandlerContext ctx) throws Exception {
+        super.channelWritabilityChanged(ctx);
+        log.info("channelWritabilityChanged:" + ctx.channel().isWritable());
     }
 
     @Override
