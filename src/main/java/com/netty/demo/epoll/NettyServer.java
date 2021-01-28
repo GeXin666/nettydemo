@@ -32,8 +32,8 @@ public class NettyServer {
             .channel(NioServerSocketChannel.class)
             .handler(new LoggingHandler(LogLevel.DEBUG))
             .option(ChannelOption.ALLOCATOR, ByteBufAllocator.DEFAULT)
-                .childOption(ChannelOption.RCVBUF_ALLOCATOR, new AdaptiveRecvByteBufAllocator())
-            .childOption(ChannelOption.WRITE_BUFFER_WATER_MARK, new WriteBufferWaterMark(16, 32))
+                //.childOption(ChannelOption.RCVBUF_ALLOCATOR, new AdaptiveRecvByteBufAllocator())
+            //.childOption(ChannelOption.WRITE_BUFFER_WATER_MARK, new WriteBufferWaterMark(16, 32))
             .childHandler(new ServerInitializer());
         b.bind("0.0.0.0", Config.serverPort).sync().channel();
         log.info("Netty Server started on port: {}", Config.serverPort);

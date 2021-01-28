@@ -29,6 +29,12 @@ public class MyHandler extends SimpleChannelInboundHandler<ByteBuf> {
     }
 
     @Override
+    public void channelInactive(ChannelHandlerContext ctx) throws Exception {
+        executorService.shutdown();
+        super.channelInactive(ctx);
+    }
+
+    @Override
     public void channelWritabilityChanged(ChannelHandlerContext ctx) throws Exception {
         log.info(ctx.channel().isWritable() + "");
         super.channelWritabilityChanged(ctx);
