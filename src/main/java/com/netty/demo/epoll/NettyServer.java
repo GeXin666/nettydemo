@@ -15,7 +15,7 @@ import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 
 @Slf4j
-@Component
+//@Component
 public class NettyServer {
 
     private EventLoopGroup bossGroup = new NioEventLoopGroup(1);

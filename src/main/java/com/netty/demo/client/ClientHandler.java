@@ -3,6 +3,8 @@ package com.netty.demo.client;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufUtil;
 import io.netty.buffer.Unpooled;
+import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.util.ReferenceCountUtil;
@@ -36,7 +38,14 @@ public class ClientHandler extends ChannelInboundHandlerAdapter {
                 ByteBuf buf = Unpooled.copiedBuffer(ECHO_REQ, DELIMITER.getBytes());
                 SEQ.getAndAdd(buf.readableBytes());
                 if(ctx.channel().isWritable()) {
-                    ctx.channel().write(buf);
+                    ctx.channel().write(buf).addListener(new ChannelFutureListener() {
+                        @Override
+                        public void operationComplete(ChannelFuture future) throws Exception {
+                            if(!future.isSuccess()) {
+
+                            }
+                        }
+                    });
                 } else {
                     //log.warn("channel is not writeable :" + ctx.channel().unsafe().outboundBuffer().nioBufferSize());
                 }
