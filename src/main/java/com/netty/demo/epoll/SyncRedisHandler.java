@@ -1,5 +1,6 @@
 package com.netty.demo.epoll;
 
+import com.netty.demo.vertx.JedisUtil;
 import com.netty.demo.vertx.RedisVerticle;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelFuture;
@@ -10,15 +11,20 @@ import io.netty.handler.codec.http.*;
 import io.vertx.redis.client.RedisAPI;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static io.netty.handler.codec.http.HttpHeaderNames.CONNECTION;
 import static io.netty.handler.codec.http.HttpHeaderValues.KEEP_ALIVE;
 
 @Slf4j
-public class MyHandler extends SimpleChannelInboundHandler<HttpRequest> {
+public class SyncRedisHandler extends SimpleChannelInboundHandler<HttpRequest> {
+
     private static final byte[] CONTENT = { 'H', 'e', 'l', 'l', 'o', ' ', 'W', 'o', 'r', 'l', 'd' };
     private static AtomicInteger counter = new AtomicInteger();
+
+    private static Executor executor = Executors.newFixedThreadPool(4);
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, HttpRequest req) {
@@ -41,13 +47,12 @@ public class MyHandler extends SimpleChannelInboundHandler<HttpRequest> {
         }
 
 
-        RedisAPI redisAPI = RedisVerticle.redisAPI;
-        redisAPI.incr("count").onSuccess(resp ->{
-            //log.info("success");
+        executor.execute(()->{
+            JedisUtil.incr("count");
             ChannelFuture f = ctx.writeAndFlush(response);
             if (!keepAlive) {
                 f.addListener(ChannelFutureListener.CLOSE);
             }
-        }).onFailure(t->{t.printStackTrace();});
+        });
     }
 }
