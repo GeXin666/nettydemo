@@ -2,9 +2,6 @@ package com.netty.demo.client;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufUtil;
-import io.netty.buffer.Unpooled;
-import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.util.ReferenceCountUtil;
@@ -19,8 +16,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class ClientHandler extends ChannelInboundHandlerAdapter {
 
     private AtomicInteger SEQ = new AtomicInteger();
-    private final byte[] ECHO_REQ = new byte[1024 * 1024];
-    private final String DELIMITER = "$_";
+    private final byte[] ECHO_REQ = new byte[1024];
     private ScheduledExecutorService executorService = Executors.newScheduledThreadPool(1);
 
     @Override
@@ -34,23 +30,15 @@ public class ClientHandler extends ChannelInboundHandlerAdapter {
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
         log.info("New Client Active: {}", ctx.channel().toString());
         executorService.scheduleAtFixedRate(()->{
-            for (int i = 0; i < 10; i++) {
-                ByteBuf buf = Unpooled.copiedBuffer(ECHO_REQ, DELIMITER.getBytes());
+            for (int i = 0; i < 1; i++) {
+                ByteBuf buf = ctx.alloc().ioBuffer(ECHO_REQ.length);
+                buf.writeBytes(ECHO_REQ);
                 SEQ.getAndAdd(buf.readableBytes());
                 if(ctx.channel().isWritable()) {
-                    ctx.channel().write(buf).addListener(new ChannelFutureListener() {
-                        @Override
-                        public void operationComplete(ChannelFuture future) throws Exception {
-                            if(!future.isSuccess()) {
-
-                            }
-                        }
-                    });
-                } else {
-                    //log.warn("channel is not writeable :" + ctx.channel().unsafe().outboundBuffer().nioBufferSize());
+                    ctx.channel().write(buf);
                 }
-                ctx.flush();
             }
+            ctx.flush();
             int counter = SEQ.getAndSet(0);
             log.info("the client is send rate is " + counter + "bytes/s");
         }, 0, 1000, TimeUnit.MILLISECONDS);

@@ -1,66 +1,57 @@
 package com.netty.demo.vertx;
 
 import io.vertx.core.AbstractVerticle;
-import io.vertx.core.Future;
-import io.vertx.core.Promise;
-import io.vertx.redis.client.*;
+import io.vertx.redis.client.Redis;
+import io.vertx.redis.client.RedisAPI;
+import io.vertx.redis.client.RedisOptions;
 import lombok.extern.slf4j.Slf4j;
+
+import java.util.ArrayList;
 
 @Slf4j
 public class RedisVerticle extends AbstractVerticle {
 
-    private static final int MAX_RECONNECT_RETRIES = 16;
+    public static volatile RedisAPI redisAPI;
 
-    private final RedisOptions options = new RedisOptions();
-
-    public RedisAPI redis;
+    private  RedisOptions redisOptions;
 
     @Override
     public void start() {
-        log.info("start");
-        createRedisClient().onSuccess(conn -> redis = RedisAPI.api(conn));
+        redisOptions = new RedisOptions()
+                .setConnectionString("redis://192.168.80.112:6379")
+                .setMaxPoolSize(8);
+                //.setMaxWaitingHandlers(32);
+        createRedisClient(redisOptions);
     }
 
-    /**
-     * Will create a redis client and setup a reconnect handler when there is
-     * an exception in the connection.
-     */
-    private Future<RedisConnection> createRedisClient() {
-        Promise<RedisConnection> promise = Promise.promise();
-        RedisOptions options = new RedisOptions().setConnectionString("redis://192.168.80.110:6379")
-                // allow at max 8 connections to redis
-                .setMaxPoolSize(8)
-                // allow 32 connection requests to queue waiting
-                // for a connection to be available.
-                .setMaxWaitingHandlers(32);
-
-        Redis.createClient(vertx, options)
+    private void createRedisClient(RedisOptions redisOptions) {
+        Redis.createClient(vertx, redisOptions)
                 .connect()
                 .onSuccess(conn -> {
-                    log.info("连接成功 : {}", conn);
-                    conn.exceptionHandler(e -> attemptReconnect(0));
-                    promise.complete(conn);
-                }).onFailure(h -> {
-                    h.printStackTrace();
-                    attemptReconnect(0);
+                    redisAPI = RedisAPI.api(conn);
+
+                    vertx.setPeriodic(5 * 1000, handler -> {
+                        redisAPI.ping(new ArrayList<>(), result -> {
+                            log.info("redis Ping 数据包");
+                        });
+                    });
+
+                    log.info("redis 创建成功");
+                    conn.exceptionHandler(e -> {
+                        log.warn("redis 连接异常中断");
+                        attemptReconnect();
+                    });
+
+
+                }).onFailure(e -> {
+                    log.warn("redis 连接失败");
+                    attemptReconnect();
         });
-        return promise.future();
     }
 
-    /**
-     * Attempt to reconnect up to MAX_RECONNECT_RETRIES
-     */
-    private void attemptReconnect(int retry) {
-        log.debug("Redis 从新连接.....");
-        if (retry > MAX_RECONNECT_RETRIES) {
-            // we should stop now, as there's nothing we can do.
-        } else {
-            // retry with backoff up to 10240 ms
-            long backoff = (long) (Math.pow(2, Math.min(retry, 10)) * 10);
-
-            vertx.setTimer(backoff, timer -> {
-                createRedisClient().onFailure(t -> attemptReconnect(retry + 1));
-            });
-        }
+    private void attemptReconnect() {
+        vertx.setTimer(1000, timer -> {
+            log.warn("redis 重新连接...");
+            createRedisClient(redisOptions);});
     }
 }
