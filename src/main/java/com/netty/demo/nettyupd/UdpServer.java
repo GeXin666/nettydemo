@@ -18,11 +18,12 @@ public class UdpServer {
                     @Override
                     protected void initChannel(NioDatagramChannel nioDatagramChannel) throws Exception {
                         log.info(nioDatagramChannel.toString());
-                        nioDatagramChannel.pipeline().addLast(new MyUdpDecoder());//3.4在pipeline中加入解码器
+                        //指定分隔符
+                        nioDatagramChannel.pipeline().addLast(new MyUdpDecoder());
                     }
                 });
         try {
-            Channel channel = bootstrap.bind(8080).sync().channel();
+            Channel channel = bootstrap.bind(80).sync().channel();
             channel.closeFuture().sync();
         } catch (InterruptedException e) {
             e.printStackTrace();

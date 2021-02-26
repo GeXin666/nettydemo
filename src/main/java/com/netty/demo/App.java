@@ -12,10 +12,11 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class App {
 
-    public static final Vertx vertx = Vertx.vertx();
+    //public static final Vertx vertx = Vertx.vertx();
 
     public static void main(String[] args) {
-        new SpringApplicationBuilder(App.class).web(WebApplicationType.NONE).run(args);
-        vertx.deployVerticle(new RedisVerticle());
+        //new SpringApplicationBuilder(App.class).web(WebApplicationType.NONE).run(args);
+        new SpringApplicationBuilder(App.class).run(args);
+        //vertx.deployVerticle(new RedisVerticle());
     }
 }
