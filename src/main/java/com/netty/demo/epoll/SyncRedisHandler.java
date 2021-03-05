@@ -1,14 +1,11 @@
 package com.netty.demo.epoll;
 
-import com.netty.demo.vertx.JedisUtil;
-import com.netty.demo.vertx.RedisVerticle;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.*;
-import io.vertx.redis.client.RedisAPI;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.concurrent.Executor;
@@ -46,13 +43,15 @@ public class SyncRedisHandler extends SimpleChannelInboundHandler<HttpRequest> {
             response.headers().set(CONNECTION, HttpHeaderValues.CLOSE);
         }
 
+        ChannelFuture f = ctx.writeAndFlush(response);
+        if (!keepAlive) {
+            f.addListener(ChannelFutureListener.CLOSE);
+        }
+    }
 
-        executor.execute(()->{
-            JedisUtil.incr("count");
-            ChannelFuture f = ctx.writeAndFlush(response);
-            if (!keepAlive) {
-                f.addListener(ChannelFutureListener.CLOSE);
-            }
-        });
+    @Override
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+        log.error("netty-error", cause);
+        super.exceptionCaught(ctx, cause);
     }
 }

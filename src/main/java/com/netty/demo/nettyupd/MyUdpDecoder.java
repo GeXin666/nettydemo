@@ -7,6 +7,7 @@ import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.channel.socket.DatagramPacket;
 import io.netty.util.ByteProcessor;
 import lombok.extern.slf4j.Slf4j;
+import sun.misc.CRC16;
 
 import java.util.zip.CRC32;
 
@@ -44,9 +45,11 @@ public class MyUdpDecoder extends SimpleChannelInboundHandler<DatagramPacket> {
             //读取CRC效验码的值
             int crcValue = reveiveBuf.readUnsignedShort();
 
-            CRC32 crc32 = new CRC32();
-            crc32.update(dateByte);
-            long dataCrcValue = crc32.getValue();
+            CRC16 crc32 = new CRC16();
+            for(int j=0; j<dateByte.length; j++) {
+                crc32.update(dateByte[j]);
+            }
+            long dataCrcValue = crc32.value;
 
             //验证错误
             if(crcValue != dataCrcValue) {

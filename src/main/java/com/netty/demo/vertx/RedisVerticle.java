@@ -52,6 +52,7 @@ public class RedisVerticle extends AbstractVerticle {
     private void attemptReconnect() {
         vertx.setTimer(1000, timer -> {
             log.warn("redis 重新连接...");
-            createRedisClient(redisOptions);});
+            createRedisClient(redisOptions);
+        });
     }
 }
