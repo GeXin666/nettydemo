@@ -16,6 +16,6 @@ public class App {
 
     public static void main(String[] args) {
         new SpringApplicationBuilder(App.class).web(WebApplicationType.NONE).run(args);
-        vertx.deployVerticle(new RedisVerticle());
+        //vertx.deployVerticle(new RedisVerticle());
     }
 }

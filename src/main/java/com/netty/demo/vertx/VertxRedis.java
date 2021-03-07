@@ -27,9 +27,5 @@ public class VertxRedis {
 //                        System.out.println(value);
 //                    });
 //                });
-        Thread.sleep(3000);
-        redisVerticle.redis.get("id1").onSuccess(v->{
-            log.debug(v.toString());
-        });
     }
 }
