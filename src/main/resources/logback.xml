@@ -6,7 +6,7 @@
     <conversionRule conversionWord="wEx" converterClass="org.springframework.boot.logging.logback.ExtendedWhitespaceThrowableProxyConverter" />
 
     <property name="CONSOLE_LOG_PATTERN"
-              value="%red(%d{yyyy-MM-dd HH:mm:ss}) %green([%thread]) %highlight(%-5level) %boldMagenta(%logger{10}):%boldMagenta(%method) - %cyan(%msg%n)" />
+              value="[@@]%red(%d{yyyy-MM-dd HH:mm:ss}) %green([%thread]) %highlight(%-5level) %boldMagenta(%logger{10}):%boldMagenta(%method) - %cyan(%msg%n)" />
 
     <property name="log.directory" value="./"/>
     <property name="logName" value="netty-demo"/>
@@ -21,67 +21,19 @@
         </encoder>
     </appender>
 
-    <appender name="debug" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <File>${log.directory}/logs/${logName}.debug.log</File>
-        <filter class="ch.qos.logback.classic.filter.LevelFilter">
-            <level>DEBUG</level>
-            <onMatch>ACCEPT</onMatch>
-            <onMismatch>DENY</onMismatch>
-        </filter>
-        <encoder>
-            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} ${logNode} [%thread] %-5level %logger{40} - %msg%n</pattern>
-        </encoder>
-        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>${log.directory}/logs/${logName}.debug.%d{yyyy-MM-dd}.log</fileNamePattern>
-        </rollingPolicy>
-    </appender>
-
-    <appender name="info" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <File>${log.directory}/logs/${logName}.info.log</File>
-        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+    <appender name="fileLog" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <File>${log.directory}/logs/${logName}.log</File>
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
             <level>INFO</level>
-            <onMatch>ACCEPT</onMatch>
-            <onMismatch>DENY</onMismatch>
         </filter>
-        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>${log.directory}/logs/${logName}.info.%d{yyyy-MM-dd}.log</fileNamePattern>
-            <maxHistory>30</maxHistory>
-        </rollingPolicy>
         <encoder>
-            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} ${logNode} [%thread] %-5level %logger{40} %method - %msg%n</pattern>
+            <pattern>[@@] %d{yyyy-MM-dd HH:mm:ss.SSS} ${logNode} [%thread] %-5level %logger{40} - %msg%n</pattern>
         </encoder>
-    </appender>
-
-    <appender name="warn" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <File>${log.directory}/logs/${logName}.warn.log</File>
-        <filter class="ch.qos.logback.classic.filter.LevelFilter">
-            <level>WARN</level>
-            <onMatch>ACCEPT</onMatch>
-            <onMismatch>DENY</onMismatch>
-        </filter>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>${log.directory}/logs/${logName}.warn.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <fileNamePattern>${log.directory}/logs/${logName}.%d{yyyy-MM-dd}.log</fileNamePattern>
             <maxHistory>30</maxHistory>
+            <totalSizeCap>10GB</totalSizeCap>
         </rollingPolicy>
-        <encoder>
-            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} ${logNode} [%thread] %-5level %logger{40} %method - %msg%n</pattern>
-        </encoder>
-    </appender>
-
-    <appender name="error" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <File>${log.directory}/logs/${logName}.error.log</File>
-        <filter class="ch.qos.logback.classic.filter.LevelFilter">
-            <level>ERROR</level>
-            <onMatch>ACCEPT</onMatch>
-            <onMismatch>DENY</onMismatch>
-        </filter>
-        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>${log.directory}/logs/${logName}.error.%d{yyyy-MM-dd}.log</fileNamePattern>
-            <maxHistory>30</maxHistory>
-        </rollingPolicy>
-        <encoder>
-            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} ${logNode} [%thread] %-5level %logger{40} %method - %msg%n</pattern>
-        </encoder>
     </appender>
 
     <logger name="org.springframework" level="INFO" />
@@ -93,9 +45,6 @@
 
     <root level="debug">
         <appender-ref ref="stdout"/>
-        <appender-ref ref="debug"/>
-        <appender-ref ref="info"/>
-        <appender-ref ref="warn"/>
-        <appender-ref ref="error"/>
+        <appender-ref ref="fileLog"/>
     </root>
 </configuration>

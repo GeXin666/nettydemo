@@ -9,20 +9,38 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.util.concurrent.GlobalEventExecutor;
 
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
+
 public class NettyClient {
 
     public static void main(String[] args) throws InterruptedException {
-        ChannelGroup channels = new DefaultChannelGroup(GlobalEventExecutor.INSTANCE);
 
-        NettyClient nettyClient = new NettyClient();
+        //计划任务线程池，默认1个线程就够
+        ScheduledExecutorService executorService = Executors.newScheduledThreadPool(1);
 
-        for (int i = 0; i < 2; i++) {
-            //创建一个客户端连接
-            Channel channel = nettyClient.createClient();
-            //把连接加入组(连接关闭自动从组内移除)
-            channels.add(channel);
-        }
+        //启动线程去创建100个连接,连接建立后线程就回收了
+        new Thread(()->{
+            ChannelGroup channels = new DefaultChannelGroup(GlobalEventExecutor.INSTANCE);
+            NettyClient nettyClient = new NettyClient();
+            for (int i = 0; i < 100; i++) {
+                //创建一个客户端连接
+                Channel channel = null;
+                try {
+                    channel = nettyClient.createClient();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                //把连接加入组(连接关闭自动从组内移除)
+                channels.add(channel);
+            }
 
+            //创建计划任务，60分钟后执行
+            ScheduledFuture future = executorService.schedule(()->{channels.close();}, 60, TimeUnit.MINUTES);
+            future.cancel(true);
+        }).start();
         //进程停止时调用此方法
         //nettyClient.stopNettyClient();
 

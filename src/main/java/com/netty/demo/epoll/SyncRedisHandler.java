@@ -19,13 +19,12 @@ import static io.netty.handler.codec.http.HttpHeaderValues.KEEP_ALIVE;
 public class SyncRedisHandler extends SimpleChannelInboundHandler<HttpRequest> {
 
     private static final byte[] CONTENT = { 'H', 'e', 'l', 'l', 'o', ' ', 'W', 'o', 'r', 'l', 'd' };
-    private static AtomicInteger counter = new AtomicInteger();
+    private static AtomicInteger counter;
 
     private static Executor executor = Executors.newFixedThreadPool(4);
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, HttpRequest req) {
-        log.info("count: " + counter.addAndGet(1));
 
         boolean keepAlive = HttpUtil.isKeepAlive(req);
         FullHttpResponse response = new DefaultFullHttpResponse(req.protocolVersion(), HttpResponseStatus.OK,
@@ -47,11 +46,7 @@ public class SyncRedisHandler extends SimpleChannelInboundHandler<HttpRequest> {
         if (!keepAlive) {
             f.addListener(ChannelFutureListener.CLOSE);
         }
-    }
 
-    @Override
-    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-        log.error("netty-error", cause);
-        super.exceptionCaught(ctx, cause);
+        log.info("count: " + counter.addAndGet(1));
     }
 }
