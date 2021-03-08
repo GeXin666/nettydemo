@@ -1,6 +1,5 @@
 package com.netty.demo;
 
-import com.netty.demo.vertx.RedisVerticle;
 import io.vertx.core.Vertx;
 import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.builder.SpringApplicationBuilder;
@@ -16,6 +15,5 @@ public class App {
 
     public static void main(String[] args) {
         new SpringApplicationBuilder(App.class).web(WebApplicationType.NONE).run(args);
-        //vertx.deployVerticle(new RedisVerticle());
     }
 }
