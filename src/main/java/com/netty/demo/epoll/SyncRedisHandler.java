@@ -25,7 +25,7 @@ public class SyncRedisHandler extends SimpleChannelInboundHandler<HttpRequest> {
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, HttpRequest req) {
-
+        log.info(req.toString());
         boolean keepAlive = HttpUtil.isKeepAlive(req);
         FullHttpResponse response = new DefaultFullHttpResponse(req.protocolVersion(), HttpResponseStatus.OK,
                 Unpooled.wrappedBuffer(CONTENT));
