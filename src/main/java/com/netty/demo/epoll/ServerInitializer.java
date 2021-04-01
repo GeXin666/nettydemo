@@ -8,7 +8,6 @@ public class ServerInitializer extends ChannelInitializer {
     @Override
     protected void initChannel(Channel ch) {
         ChannelPipeline pipeline = ch.pipeline();
-        pipeline.addLast("mydecoder", new MyDecoder());
         pipeline.addLast("MyHandler", MyHandler.INSTANCE);
     }
 }
